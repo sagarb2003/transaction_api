@@ -1,13 +1,29 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const databaseUrl = process.env.DATABASE_URL;
 
-mongoose.connect(databaseUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+const userAccountSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: Number,
+    required: true,
+  },
+  transactions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Transaction",
+    },
+  ],
 });
+
 const transactionSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "UserAccount",
+    required: true,
+  },
   transactionType: {
     type: String,
     enum: ["expense", "income"],
@@ -18,11 +34,12 @@ const transactionSchema = new Schema({
     required: true,
   },
   transactionDate: {
-    type: Date,
+    type:String,
     required: true,
   },
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
+const UserAccount = mongoose.model("UserAccount", userAccountSchema);
 
-module.exports = Transaction;
+module.exports = { Transaction, UserAccount };

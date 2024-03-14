@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const getUserIdFromToken = (req, res, next) => {
-  const token = req.headers.Authorization;
+function getUserIdFromToken (req, res, next){
+  const token = req.headers.authorization;
+  console.log(token);
 
   if (!token) {
     return res.status(401).json({ msg: "Unauthorized" });
@@ -18,4 +19,4 @@ const getUserIdFromToken = (req, res, next) => {
   }
 };
 
-module.exports = { getUserIdFromToken };
+module.exports =  getUserIdFromToken ;

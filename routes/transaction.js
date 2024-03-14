@@ -2,20 +2,20 @@ const express = require("express");
 const Transaction = require("../db/index");
 const router = express.Router();
 const transactionValidate = require("../zod");
-const getUserIdFromToken=require('../middleware');
+const getUserIdFromToken = require("../middleware");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post("/", async (req, res) => {
   try {
     const body = req.body;
-    const { success } = transactionValidate.safeParse(body);
+    // const { success } = transactionValidate.safeParse(body);
 
-    if (!success) {
-      return res.status(400).json({
-        msg: "Invalid Input",
-      });
-    }
+    // if (!success) {
+    //   return res.status(400).json({
+    //     msg: "Invalid Input",
+    //   });
+    // }
 
     const newTransaction = await Transaction.create({
       transactionType: req.body.transactionType,
@@ -49,7 +49,7 @@ router.get("/", getUserIdFromToken, async (req, res) => {
   }
 });
 
-router.get("/summary",getUserIdFromToken,async (req, res) => {
+router.get("/summary", getUserIdFromToken, async (req, res) => {
   try {
     const summary = await Transaction.aggregate([
       {
@@ -89,6 +89,14 @@ router.get("/summary",getUserIdFromToken,async (req, res) => {
       },
     ]);
 
+    // Check if summary is empty
+    if (summary.length === 0) {
+      return res.status(404).json({
+        msg: "No transactions found",
+      });
+    }
+
+    // Return summary if not empty
     res.status(200).json({
       totalIncome: summary[0].totalIncome || 0,
       totalExpenses: summary[0].totalExpenses || 0,
@@ -101,6 +109,7 @@ router.get("/summary",getUserIdFromToken,async (req, res) => {
     });
   }
 });
+
 
 router.delete("/:id", async (req, res) => {
   try {
@@ -124,4 +133,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports=router;
+module.exports = router;

@@ -4,5 +4,5 @@ const router = express.Router();
 
 const transactionRouter = require("./transaction");
 
-router.use("/user", transactionRouter);
+router.use("/transaction", transactionRouter);
 module.exports = router;
